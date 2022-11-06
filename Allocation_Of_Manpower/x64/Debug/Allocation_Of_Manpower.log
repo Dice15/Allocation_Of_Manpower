@@ -1,0 +1,17 @@
+﻿  main.cpp
+E:\OneDrive - dongguk.edu\DGU_Unv\2022\3-2학기\컴퓨터알고리즘과실습\팀 프로젝트\Allocation_Of_Manpower\Allocation_Of_Manpower\FFT.h(71,63): warning C4244: '인수': 'Fast_Fourier_Transform::Integer'에서 'const std::complex<double>::_Ty'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+E:\OneDrive - dongguk.edu\DGU_Unv\2022\3-2학기\컴퓨터알고리즘과실습\팀 프로젝트\Allocation_Of_Manpower\Allocation_Of_Manpower\FFT.h(101,78): warning C4244: '인수': '_Ty'에서 '_Elem'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+          with
+          [
+              _Ty=MCMFGraph<ItemType,CostType,FlowType>::Integer
+          ]
+          and
+          [
+              _Elem=char
+          ]
+E:\OneDrive - dongguk.edu\DGU_Unv\2022\3-2학기\컴퓨터알고리즘과실습\팀 프로젝트\Allocation_Of_Manpower\Allocation_Of_Manpower\Polynomial.h(27,47): warning C4227: 오래된 구문을 사용했습니다. 참조의 한정자가 무시됩니다.
+E:\OneDrive - dongguk.edu\DGU_Unv\2022\3-2학기\컴퓨터알고리즘과실습\팀 프로젝트\Allocation_Of_Manpower\Allocation_Of_Manpower\Polynomial.h(32,47): warning C4227: 오래된 구문을 사용했습니다. 참조의 한정자가 무시됩니다.
+E:\OneDrive - dongguk.edu\DGU_Unv\2022\3-2학기\컴퓨터알고리즘과실습\팀 프로젝트\Allocation_Of_Manpower\Allocation_Of_Manpower\Polynomial.h(47,49): warning C4227: 오래된 구문을 사용했습니다. 참조의 한정자가 무시됩니다.
+E:\OneDrive - dongguk.edu\DGU_Unv\2022\3-2학기\컴퓨터알고리즘과실습\팀 프로젝트\Allocation_Of_Manpower\Allocation_Of_Manpower\Polynomial.h(51,49): warning C4227: 오래된 구문을 사용했습니다. 참조의 한정자가 무시됩니다.
+E:\OneDrive - dongguk.edu\DGU_Unv\2022\3-2학기\컴퓨터알고리즘과실습\팀 프로젝트\Allocation_Of_Manpower\Allocation_Of_Manpower\main.cpp(91,25): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+  Allocation_Of_Manpower.vcxproj -> E:\OneDrive - dongguk.edu\DGU_Unv\2022\3-2학기\컴퓨터알고리즘과실습\팀 프로젝트\Allocation_Of_Manpower\x64\Debug\Allocation_Of_Manpower.exe
