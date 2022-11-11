@@ -1,12 +1,14 @@
 #pragma once
 
-/*************************************************************
-*   Minimum Cost Maximum Flow with Infimum Network Flow
-*   Time Complexity : o(V * E * f)
+/*********************************************************************************
+*   Minimum Cost Maximum Flow with Edge Demands Flow
+*   Time Complexity : o((V * E * f) + (V^2 * E))
+* 
+*	MCMF(SPFA + Edmonds Karp), Maximum Flow with Edge Demands(Dinic's Algorithm)
 *
 *   Author : J.H Moon <jqkt15@naver.com>
 *   Date : August 19, 2020
-**************************************************************/
+**********************************************************************************/
 
 
 #include <vector>
@@ -30,6 +32,12 @@ public:
 
 		void update_flow(FlowType _flowed) { _Curr_Flow += _flowed;  _Rev_Edge->_Curr_Flow -= _flowed; }
 		FlowType remain_flow() { return _Capacity - _Curr_Flow; }
+	};
+
+	struct Result_Of_MCMF {
+		CostType _Total_Cost; FlowType _Total_Flow, _Flow_For_Edge_Demands;
+		vector<vector<Edge*>> _Graph;
+		Result_Of_MCMF(CostType _total_cost, FlowType _total_flow, FlowType _flow_for_edge_demands, vector<vector<Edge*>> _graph) :_Total_Cost(_total_cost), _Total_Flow(_total_flow), _Flow_For_Edge_Demands(_flow_for_edge_demands), _Graph(_graph) {}
 	};
 
 
@@ -63,7 +71,7 @@ public:
 	}
 
 
-private:
+private:	// MCMF: SPFA + Edmonds Karp
 	Boolean SPFA(Integer _source, Integer _sink, vector<CostType>& _cost, vector<Boolean>& _inque, vector<Integer>& _rev_path, vector<Edge*>& _use_edge)
 	{
 		queue<Integer> _que;
@@ -77,7 +85,7 @@ private:
 			{
 				Integer _next = _edge->_Next_Vertex;
 
-				if (_edge->remain_flow() > 0 && _cost[_next] > _cost[_curr] + _edge->_Cost)
+				if (_edge->remain_flow() > _Empty_Flow && _cost[_next] > _cost[_curr] + _edge->_Cost)
 				{
 					_cost[_next] = _cost[_curr] + _edge->_Cost;
 					_rev_path[_next] = _curr;
@@ -111,21 +119,94 @@ private:
 	}
 
 
-public:
-	pair<pair<CostType, FlowType>, vector<FlowType>> MCMF(Integer _source, Integer _sink)
+private:	// Maxflow: Dinic's Algorithm
+	bool construct_level_graph(Integer _source, Integer _sink, vector<Integer>& _level)  // construct level graph with bfs
 	{
+		fill(_level.begin(), _level.end(), -1); 
+		queue<int> _que; 
+		_level[_source] = 0; _que.push(_source);
+
+		while (!_que.empty())
+		{
+			Integer _curr_node = _que.front(); _que.pop();
+
+			for (auto& _edge : _Graph[_curr_node])
+			{
+				Integer _next = _edge->_Next_Vertex;
+
+				if (_level[_next] == -1 && _edge->remain_flow() > _Empty_Flow) {
+					_level[_next] = _level[_curr_node] + 1;
+					_que.push(_next);
+				}
+			}
+		}
+		return (_level[_sink] != -1);
+	}
+
+	FlowType find_blocking_flow(Integer _curr_node, Integer _sink, FlowType _curr_flow, vector<Integer>& _level, vector<Integer>& _work)  // find blocking flow with dfs then let it flow
+	{
+		if (_curr_node == _sink) return _curr_flow;
+
+		for (Integer& i = _work[_curr_node]; i < _Graph[_curr_node].size(); i++)
+		{
+			Edge* _edge = _Graph[_curr_node][i];
+			Integer _next = _edge->_Next_Vertex;
+
+			if (_level[_next] == _level[_curr_node] + 1 && _edge->remain_flow() > _Empty_Flow)
+			{
+				FlowType _min_Flow = find_blocking_flow(_next, _sink, min(_curr_flow, _edge->remain_flow()), _level, _work);
+
+				if (_min_Flow > _Empty_Flow) {
+					_edge->update_flow(_min_Flow);
+					return _min_Flow;
+				}
+			}
+		}
+		return _Empty_Flow;
+	}
+
+	FlowType Dinic(Integer _source, Integer _sink, vector<Integer> _level, vector<Integer> _work)
+	{
+		FlowType _total_flow = _Empty_Flow;
+
+		while (construct_level_graph(_source, _sink, _level))  // S에서 T까지 도달 할 수 있는 레벨 그래프가 만들어진 경우
+		{
+			fill(_work.begin(), _work.end(), 0);
+
+			while (1) {
+				FlowType _can_flow = find_blocking_flow(_source, _sink, _INF_Flow, _level, _work);
+				if (_can_flow == 0) break;  // 레벨 그래프에서 더 이상 차단 유량을 찾을 수 없다면 break
+				_total_flow += _can_flow;
+			}
+		}
+		return _total_flow;
+	}
+
+
+public:
+	Result_Of_MCMF MCMF_with_Edge_Demands(Integer _source, Integer _sink, Integer _source_for_lower, Integer _sink_for_lower)
+	{
+		auto _res_of_dinic = Dinic(_source_for_lower, _sink_for_lower, vector<Integer>(_Graph_Size, -1), vector<Integer>(_Graph_Size, 0));
+		auto _res_of_mcmf = Edmonds_Karp(_source, _sink, vector<CostType>(_Graph_Size), vector<Boolean>(_Graph_Size), vector<Integer>(_Graph_Size), vector<Edge*>(_Graph_Size, nullptr));
+		return Result_Of_MCMF(_res_of_mcmf.first, _res_of_mcmf.second, _res_of_dinic, _Graph);
+	}
+
+	/*pair<pair<CostType, FlowType>, vector<FlowType>> MCMF_with_Edge_Demands(Integer _source, Integer _sink, Integer _source_for_lower, Integer _sink_for_lower, FlowType _total_lower_bound_flow)
+	{
+		FlowType _max_flow_for_lower_bound = Dinic(_source_for_lower, _sink_for_lower, vector<Integer>(_Graph_Size, -1), vector<Integer>(_Graph_Size, 0));
+		if (_max_flow_for_lower_bound < _total_lower_bound_flow) return	{ {-1,-1}, vector<FlowType>() };
+
 		pair<CostType, FlowType> _mcmf_result = Edmonds_Karp(_source, _sink, vector<CostType>(_Graph_Size), vector<Boolean>(_Graph_Size), vector<Integer>(_Graph_Size), vector<Edge*>(_Graph_Size, nullptr));
 		vector<FlowType> _vertex_to_sink(_Graph_Size);
 
 		for (Integer i = 0; i < _Graph_Size; i++) {
-			for (auto& edge : _Graph[i])
-				_vertex_to_sink[i] += (edge->_Next_Vertex == _sink ? edge->_Curr_Flow : _Empty_Flow);
+			for (auto& edge : _Graph[i]) _vertex_to_sink[i] += (edge->_Next_Vertex == _sink ? edge->_Curr_Flow : _Empty_Flow);
 		}
 
 		return { _mcmf_result,_vertex_to_sink };
-	}
+	}*/
 
 	// print format
-	friend ostream& operator << (std::ostream& _out, MCMFGraph _mcmf_graph) { cout << _mcmf_graph.get_graph_s(); return (_out); }
+	friend ostream& operator << (std::ostream& _os, MCMFGraph _mcmf_graph) { _os << _mcmf_graph.get_graph_s(); return (_os); }
 	string get_graph_s() { return ""; }
 };

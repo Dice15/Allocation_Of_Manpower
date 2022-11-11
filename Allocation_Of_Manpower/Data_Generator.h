@@ -41,13 +41,14 @@ public:
 			for (Integer i = 0; i < _police_info_num; i++)
 			{
 				string _line = "office" + to_string(i);
-				_line += "," + to_string(Random_Integer_Generator<Integer>(1, _officer_max_num).get_random());
+				_line += "," + to_string(Random_Integer_Generator<Integer>(_officer_max_num / 3, _officer_max_num).get_random());
 
-				vector<Boolean> dup_check(Random_Integer_Generator<Integer>(1, _officer_region_max_num).get_random(), false);
+				vector<Boolean> dup_check(Random_Integer_Generator<Integer>(_officer_region_max_num / 2, _officer_region_max_num).get_random(), false);
 				for (Integer j = dup_check.size(); j > 0; j--)
 				{
 					Integer random_num = Random_Integer_Generator<Integer>(0, dup_check.size() - 1).get_random();
 					while (dup_check[random_num]) random_num = Random_Integer_Generator<Integer>(0, dup_check.size() - 1).get_random();
+					dup_check[random_num] = true;
 					_line += ","; _line += "region" + to_string(random_num);
 				}
 				_line += "\n";
@@ -62,10 +63,11 @@ public:
 			for (Integer i = 0; i < _region_info_num; i++)
 			{
 				string _line = "region" + to_string(i);
+				Integer _require = Random_Integer_Generator<Integer>(0, _require_officer_max_num).get_random();
 				_line += "," + to_string(Random_Integer_Generator<Integer>(0, 4).get_random());
 				_line += "," + to_string(Random_Integer_Generator<Integer>(0, 4).get_random());
-				_line += "," + to_string(Random_Integer_Generator<Integer>(0, 0).get_random());
-				_line += "," + to_string(Random_Integer_Generator<Integer>(0, _require_officer_max_num).get_random());
+				_line += "," + to_string(Random_Integer_Generator<Integer>(0, _require / 3).get_random());
+				_line += "," + to_string(_require);
 				_line += "\n";
 				_fout << _line;
 			}

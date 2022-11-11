@@ -23,6 +23,7 @@ public:
 		fstream _fs(_file_name);
 		while (!_fs.eof()) {
 			getline(_fs, _string_buffer);
+			//cout << _string_buffer << '\n';
 			auto _splited_line = split_string_buffer(_string_buffer, _format);
 			if (_splited_line.size() > 0 && _splited_line[0] != "") _file_data.push_back(_splited_line);
 		}
