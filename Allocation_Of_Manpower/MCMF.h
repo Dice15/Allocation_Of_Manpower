@@ -191,21 +191,6 @@ public:
 		return Result_Of_MCMF(_res_of_mcmf.first, _res_of_mcmf.second, _res_of_dinic, _Graph);
 	}
 
-	/*pair<pair<CostType, FlowType>, vector<FlowType>> MCMF_with_Edge_Demands(Integer _source, Integer _sink, Integer _source_for_lower, Integer _sink_for_lower, FlowType _total_lower_bound_flow)
-	{
-		FlowType _max_flow_for_lower_bound = Dinic(_source_for_lower, _sink_for_lower, vector<Integer>(_Graph_Size, -1), vector<Integer>(_Graph_Size, 0));
-		if (_max_flow_for_lower_bound < _total_lower_bound_flow) return	{ {-1,-1}, vector<FlowType>() };
-
-		pair<CostType, FlowType> _mcmf_result = Edmonds_Karp(_source, _sink, vector<CostType>(_Graph_Size), vector<Boolean>(_Graph_Size), vector<Integer>(_Graph_Size), vector<Edge*>(_Graph_Size, nullptr));
-		vector<FlowType> _vertex_to_sink(_Graph_Size);
-
-		for (Integer i = 0; i < _Graph_Size; i++) {
-			for (auto& edge : _Graph[i]) _vertex_to_sink[i] += (edge->_Next_Vertex == _sink ? edge->_Curr_Flow : _Empty_Flow);
-		}
-
-		return { _mcmf_result,_vertex_to_sink };
-	}*/
-
 	// print format
 	friend ostream& operator << (std::ostream& _os, MCMFGraph _mcmf_graph) { _os << _mcmf_graph.get_graph_s(); return (_os); }
 	string get_graph_s() { return ""; }

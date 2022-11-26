@@ -73,27 +73,17 @@ private:
 		};
 
 		for (Integer i = 0; i < _Number_Of_Region; i++) {
-			// lower test
 			_MCMF_Graph.add_directed_edge(_Numbering[_Region_Info[i][0] + "in"], _Numbering[_Region_Info[i][0]]
 				, PriorityLevel(PriorityLevel::VALUETYPE::VARIABLE
 					, Polynomial(polynomial_generator(PriorityLevel::ACCIDENT::PROBABILITY, stoll(_Region_Info[i][1]), 1))
-					, Polynomial(polynomial_generator(PriorityLevel::ACCIDENT::SCALE, stoll(_Region_Info[i][2]), 1)))
-				, INF_INTEGER);
+					, Polynomial(polynomial_generator(PriorityLevel::ACCIDENT::SCALE, stoll(_Region_Info[i][2]), 1))), INF_INTEGER);
 			_MCMF_Graph.add_directed_edge(_Numbering[_Region_Info[i][0]], _Sink, PriorityLevel(), stoll(_Region_Info[i][4]) - stoll(_Region_Info[i][3]));
 
-			// lower test
 			if (stoll(_Region_Info[i][3]) > 0) {
 				_Total_Edge_Demands += stoll(_Region_Info[i][3]);
 				_MCMF_Graph.add_directed_edge(_Source_For_Lower, _Sink, PriorityLevel(), stoll(_Region_Info[i][3]));
 				_MCMF_Graph.add_directed_edge(_Numbering[_Region_Info[i][0]], _Sink_For_Lower, PriorityLevel(), stoll(_Region_Info[i][3]));
 			}
-
-			/*_MCMF_Graph.add_directed_edge(_Numbering[region_info[i][0]], _Sink
-				, PriorityLevel(PriorityLevel::VALUETYPE::VARIABLE
-					, Polynomial(polynomial_generator(PriorityLevel::ACCIDENT::PROBABILITY, stoll(region_info[i][1]), 1))
-					, Polynomial(polynomial_generator(PriorityLevel::ACCIDENT::SCALE, stoll(region_info[i][2]), 1)))
-				, stoll(region_info[i][4]));
-			*/
 		}
 	}
 
